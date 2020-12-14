@@ -95,7 +95,8 @@ class Particle {
         this.drag = 0.9;
         
         //radius
-        this.r = (Math.random() / 2 + 0.07);
+        var rand = (Math.random() / 2 + 0.07);
+        this.r = glMatrix.vec3.fromValues(rand, rand, rand);
         
         //set random color for each particle
         this.R = Math.random();
