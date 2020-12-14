@@ -13,7 +13,7 @@ var vertexPositionBuffer;
 var gravity = 9.8;
 
 // Factor to account for friction/loss of velocity when hitting the wall
-var bounceFactor = 0.9;
+var bounceFactor = 1;
 
 // Create a place to store sphere geometry
 var sphereVertexPositionBuffer;
@@ -86,13 +86,13 @@ class Particle {
         //set initial velocity for a particle to be random
         glMatrix.vec3.random(this.v);
         //acceleration array, determined with gravity
-        //this.a = glMatrix.vec3.fromValues(0, -0.2 * gravity, 0);
-        this.a = [0, -0.2 * gravity, 0];
+        this.a = glMatrix.vec3.fromValues(0, -0.2 * gravity, 0);
+        //this.a = [0, -0.2 * gravity, 0];
         //acceleration factor from bouncing off the wall
         //this.wallaccel = 0.75;
         
         //drag constant
-        this.drag = 0.9;
+        this.drag = 0.95;
         
         //radius
         var rand = (Math.random() / 2 + 0.07);
@@ -470,8 +470,6 @@ setupParticles();
 }*/
 
 function draw() { 
-    //var transformVec = glMatrix.vec3.create();
-  
 //    gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
 //    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 //
@@ -482,21 +480,12 @@ function draw() {
 //    glMatrix.vec3.add(viewPt, eyePt, viewDir);
 //    // Then generate the lookat matrix and initialize the MV matrix to that view
 //    glMatrix.mat4.lookAt(mvMatrix, eyePt, viewPt, up); 
-//    // Put light position into VIEW COORDINATES
-    //var lightPos = glMatrix.vec4.fromValues(lightx,lighty,lightz,1.0);
-    //glMatrix.vec4.transformMat4(lightPos,lightPos,mvMatrix);
-    //lightx=lightPos[0];
-    //lighty=lightPos[1];
-    //lightz=lightPos[2];
- 
-   // glMatrix.vec3.set(transformVec,20,20,20);
-    //glMatrix.mat4.scale(mvMatrix, mvMatrix,transformVec);
     
     //draw each particle, translate position, scale, set color
     for (var i = 0; i < particleNum; i++) {
         //console.log("entered loop");
         gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
-        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+        //gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
         // We'll use perspective 
         glMatrix.mat4.perspective(pMatrix,degToRad(45), gl.viewportWidth / gl.viewportHeight, 0.1, 200.0);
@@ -528,21 +517,7 @@ function draw() {
         drawSphere();
         mvPopMatrix();
     }
-    //console.log("exit loop");
     
-    //Get material color
-    //colorVal = document.getElementById("mat-color").value
-   /* R = hexToR(colorVal)/255.0;
-    G = hexToG(colorVal)/255.0;
-    B = hexToB(colorVal)/255.0;
-    
-    //Get shiny
-    shiny = 100;
-    
-    //uploadLightsToShader([lightx,lighty,lightz],[alight,alight,alight],[dlight,dlight,dlight],[slight,slight,slight]);
-    uploadMaterialToShader([R,G,B],[R,G,B],[1.0,1.0,1.0],shiny);
-    setMatrixUniforms();
-    drawSphere(); */
 }
 
 //----------------------------------------------------------------------------------
@@ -605,9 +580,9 @@ function tick() {
 
     setupParticles();
     //particleUpdate();
-    for (var i = 0; i < particleNum; i++) {
+    //for (var i = 0; i < particleNum; i++) {
         draw();
-    }
+    //}
     //draw();
     
 }
