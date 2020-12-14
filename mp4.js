@@ -68,6 +68,81 @@ function cutHex(h) {return (h.charAt(0)=="#") ? h.substring(1,7):h}
 
 //----------------------------------------------------------------------------------------------
 
+/**
+ * Class to handle with the particle system
+ */
+
+class Particle {
+    /**
+     * constructor for the Particle object
+     */
+    constructor() {
+        //position array
+        this.p = glMatrix.vec3.create();
+        //set initial position to be some random point on the screen
+        glMatrix.vec3.random(this.p);
+        //velocity array
+        this.v = glMatrix.vec3.create();
+        //set initial velocity for a particle to be random
+        glMatrix.vec3.random(this.v);
+        //acceleration array, determined with gravity
+        this.a = glMatrix.vec3.fromValues(0, -0.2 * gravity, 0);
+        //acceleration factor from bouncing off the wall
+        //this.wallaccel = 0.75;
+        
+        //drag constant
+        this.drag = 0.9;
+        
+        //radius
+        this.r = (Math.random() / 2 + 0.07);
+        
+        //set random color for each particle
+        this.R = Math.random();
+        this.G = Math.random();
+        this.B = Math.random();
+        
+    }
+    
+    /** function to update position for the particle as time passes; pass time into function
+     * from slides, using Euler integration:
+     * position_new = position_old + velocity * time
+     */
+    updatePosition(time) {
+        //velocity factor to add to update position vector
+        var velFactor = glMatrix.vec3.create();
+        glMatrix.vec3.scale(velFactor, this.v, time);
+        glMatrix.vec3.add(this.p, this.p, velFactor);
+        
+        //Sphere-wall collision detection for when sphere bounce against viewing frame's wall; handle particles hitting the wall
+        //i < 3 since position array is a vec3
+        //bounds on the wall are +- 1; if particle position is > 1 or < -1, handle collision
+        for(var i = 0; i < 3; i++) {
+            if (this.p[i] < -1) {
+                this.p[i] = -1;
+                //reflect the particle so it bounces off the wall and slows down a bit
+                this.v[i] = -this.v[i] * bounceFactor;
+            }
+            if (this.p[i] > 1) {
+                this.p[i] = 1;
+                //reflect the particle so it bounces off the wall and slows down a bit
+                this.v[i] = -this.v[i] * bounceFactor;
+            }
+        }
+        
+    }
+    
+    /** function to update velocity for the particle as time passes; pass time into function
+     * from slides, using Euler integration:
+     * velocity_new = velocity_old * d^t + acceleration * time
+     */
+    updateVelocity(time) {
+        //acceleration factor to add to update the velocity vector
+        var accelFactor = glMatrix.vec3.create();
+        glMatrix.vec3.scale(this.v, this.v, Math.pow(this.drag, time));
+        glMatrix.vec3.scale(accelFactor, this.a, time);
+        glMatrix.vec3.add(this.v, this.v, accelFactor);
+    }
+}
 
 //-------------------------------------------------------------------------
 /**
@@ -518,6 +593,3 @@ function handleKeyUp(event) {
     // console.log("Key up ", event.key, " code ", event.code);
     currentlyPressedKeys[event.key] = false;
 }
-
-
-
