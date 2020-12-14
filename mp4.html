@@ -79,33 +79,21 @@
     <canvas id="myGLCanvas" width="800" height="800"></canvas>
 
     <form>
-    Set the shading parameters for the Phong refelectance model:
+    Instructions:
         <div>
-            <input type="range" id="ambient" name="ambient" min="0.0" max="1.0" step="0.1" value="0.0">
-            <label for="ambient">Ambient Intensity</label>
+            Press o to add 1 particle
         </div>
         <div>
-            <input type="range" id="diffuse" name="diffuse" min="0.0" max="1.0" step="0.1" value="1.0">
-            <label for="diffuse">Diffuse Intensity</label>
+            Press p to add 5 particles
         </div>
         <div>
-            <input type="range" id="specular" name="specular" min="0.0" max="1.0" step="0.1" value="1.0">
-            <label for="specular">Specular Intensity</label>
-        </div>
+            Press r to remove all particles
+        </div>  
         <div>
-
-            Material color:
-            <input id="mat-color" type="color" value="#ffff00">
-            Material shininess:
-            <input id="shininess" type="number" value="100">
-        </div>      
-            Light position (in View coordinates):
-        <label for="xlight">X:</label>
-        <input type="number" id="xlight" name="xlight" value="20.0">
-        <label for="ylight">Y:</label>       
-        <input type="number" id="ylight" name="ylight" value="20.0">
-        <label for="zlight">Z:</label>      
-        <input type="number" id="zlight" name="zlight" value="20.0">
+            Press n to reset the number of particles on screen to 1
+        </div>   
+            
+        
     </form>
 
 </body>
