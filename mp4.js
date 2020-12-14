@@ -13,7 +13,7 @@ var vertexPositionBuffer;
 var gravity = 9.8;
 
 // Factor to account for friction/loss of velocity when hitting the wall
-var bounceFactor = 1;
+var bounceFactor = 0.97;
 
 // Create a place to store sphere geometry
 var sphereVertexPositionBuffer;
