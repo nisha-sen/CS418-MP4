@@ -3,6 +3,8 @@
         <title>Hello Phong</title>
         <meta charset="utf-8"> 
         <script id="shader-gouraud-phong-vs" type="x-shader/x-vertex">
+            //helloPhong starter code
+            
             attribute vec3 aVertexNormal;
             attribute vec3 aVertexPosition;
    
@@ -68,81 +70,7 @@
                 gl_FragColor = vColor;
             }
         </script>
-        <script id="shader-phong-phong-vs" type="x-shader/x-vertex">
-        //shader code taken from my MP3 shader code and helloPhong starter code
-        
-        attribute vec3 aVertexNormal;
-        attribute vec3 aVertexPosition;
-   
-        uniform mat4 uMVMatrix;
-        uniform mat4 uPMatrix;
-        uniform mat3 uNMatrix;
-    
-        varying vec3 vNormal;
-        varying vec3 vPosition;
-        varying vec3 vKDiffuse;
-        
-
-        void main(void) {
-    
-        // Get the vertex position in eye coordinates
-        vec4 vertexPositionEye4 = uMVMatrix * vec4(aVertexPosition, 1.0);
-        vPosition = vertexPositionEye4.xyz / vertexPositionEye4.w;
-        //vNormal = normalize(uNMatrix * aVertexNormal);
-        vNormal = normalize(aVertexNormal);
-        
-        gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
-        }
-   
-        </script>
-        <script id="shader-phong-phong-fss" type="x-shader/x-fragment">
-        //shader code taken from my MP3 shader code and helloPhong starter code
-        
-        precision mediump float;
-        
-        varying vec3 vNormal;
-        varying vec3 vPosition;
-        
-        varying vec3 vKDiffuse;
-        
-        uniform vec3 uLightPosition;
-        uniform vec3 uAmbientLightColor;
-        uniform vec3 uDiffuseLightColor;
-        uniform vec3 uSpecularLightColor;
-    
-        uniform vec3 uKAmbient;
-        uniform vec3 uKSpecular;
-        
-        uniform float uShininess;
-        
-        //varying vec4 vColor;
-        
-        void main(void) {
-            // Calculate the vector (l) to the light source (from my MP2, fixed shading model)
-            vec3 vectorToLightSource = normalize(uLightPosition - vPosition);
-            
-            // Calculate n dot l for diffuse lighting
-            float diffuseLightWeightning = max(dot(vNormal, vectorToLightSource), 0.0);
-            
-            // Calculate the reflection vector (r) that is needed for specular light
-            vec3 reflectionVector = normalize(reflect(-vectorToLightSource, vNormal));
-            
-            // The camera in eye coordinates is located in the origin and is pointing
-            // along the negative z-axis. Calculate viewVector (v) 
-            // in eye coordinates as:
-            // (0.0, 0.0, 0.0) - vertexPositionEye3
-            vec3 viewVectorEye = -normalize(vPosition);
-            
-            float rdotv = max(dot(reflectionVector, viewVectorEye), 0.0);
-            float specularLightWeightning = pow(rdotv, uShininess);
-            
-            // Sum up all three of these reflection components to send to the fragment shader
-            gl_FragColor = vec4(((uAmbientLightColor * uKAmbient) + (uDiffuseLightColor * vKDiffuse) * diffuseLightWeightning + (uSpecularLightColor * uKSpecular) * specularLightWeightning), 1.0);
-            
-            //gl_FragColor = FragColor;
-
-        </script>
-        <script src="./gl-matrix-min.js"></script>
+        <script src="gl-matrix-min.js"></script>
         <script src="webgl-utils.js"></script>
         <script src="simpleModeling.js"></script>
         <script src="mp4.js"></script>

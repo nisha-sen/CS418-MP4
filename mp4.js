@@ -22,7 +22,7 @@ var sphereVertexPositionBuffer;
 var sphereVertexNormalBuffer;
 
 // View parameters
-var eyePt = glMatrix.vec3.fromValues(0.0,0.0,60.0);
+var eyePt = glMatrix.vec3.fromValues(0.0,0.0,5.0);
 var viewDir = glMatrix.vec3.fromValues(0.0,0.0,-1.0);
 var up = glMatrix.vec3.fromValues(0.0,1.0,0.0);
 var viewPt = glMatrix.vec3.fromValues(0.0,0.0,0.0);
@@ -86,7 +86,8 @@ class Particle {
         //set initial velocity for a particle to be random
         glMatrix.vec3.random(this.v);
         //acceleration array, determined with gravity
-        this.a = glMatrix.vec3.fromValues(0, -0.2 * gravity, 0);
+        //this.a = glMatrix.vec3.fromValues(0, -0.2 * gravity, 0);
+        this.a = [0, -0.2 * gravity, 0];
         //acceleration factor from bouncing off the wall
         //this.wallaccel = 0.75;
         
@@ -139,8 +140,14 @@ class Particle {
         //acceleration factor to add to update the velocity vector
         var accelFactor = glMatrix.vec3.create();
         glMatrix.vec3.scale(this.v, this.v, Math.pow(this.drag, time));
-        glMatrix.vec3.scale(accelFactor, this.a, time);
         glMatrix.vec3.add(this.v, this.v, accelFactor);
+    }
+    
+    /**
+     * function to update acceleration using gravity
+     */
+    updateAcceleration() {
+        this.a = [0, -0.2 * gravity, 0];
     }
 }
 
@@ -414,27 +421,67 @@ function setupBuffers() {
 function setupParticles() {
     for (var i = 0; i < particleNum; i++) {
         particles.push(new Particle());
+        
     }
+    console.log("add particle");
 }
+
+setupParticles();
 
 //----------------------------------------------------------------------------------
 /**
  * Draw call that applies matrix transformations to model and draws model in frame
  */
+
+/*function draw() {
+        gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
+        //gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+        // We'll use perspective 
+        glMatrix.mat4.perspective(pMatrix,degToRad(45), gl.viewportWidth / gl.viewportHeight, 0.1, 200.0);
+
+        // We want to look down -z, so create a lookat point in that direction    
+        glMatrix.vec3.add(viewPt, eyePt, viewDir);
+        // Then generate the lookat matrix and initialize the MV matrix to that view
+        glMatrix.mat4.lookAt(mvMatrix, eyePt, viewPt, up); 
+    
+        mvPushMatrix();
+        particleUpdate();
+        //particles[i] = updatePosition(0.1);
+        //particles[i] = updateVelocity(0.1);
+        glMatrix.mat4.translate(mvMatrix, mvMatrix, particles[i].p);
+        glMatrix.mat4.scale(mvMatrix, mvMatrix, particles[i].r);
+        
+        //set color
+        R = particles[i].R;
+        //console.log("red");
+        G = particles[i].G;
+        B = particles[i].B;
+    
+        //Get shiny
+        shiny = 100;
+    
+        uploadLightsToShader([0,0,0],[0.0,0.0,0.0],[1.0,1.0,1.0],[1.0,1.0,1.0]);
+        uploadMaterialToShader([R,G,B],[R,G,B],[1.0,1.0,1.0],shiny);
+        setMatrixUniforms();
+        drawSphere();
+        mvPopMatrix();
+}*/
+
 function draw() { 
-    var transformVec = glMatrix.vec3.create();
+    //var transformVec = glMatrix.vec3.create();
   
-    gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
-    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-
-    // We'll use perspective 
-    glMatrix.mat4.perspective(pMatrix,degToRad(90), gl.viewportWidth / gl.viewportHeight, 0.1, 200.0);
-
-    // We want to look down -z, so create a lookat point in that direction    
-    glMatrix.vec3.add(viewPt, eyePt, viewDir);
-    // Then generate the lookat matrix and initialize the MV matrix to that view
-    glMatrix.mat4.lookAt(mvMatrix, eyePt, viewPt, up); 
-    // Put light position into VIEW COORDINATES
+//    gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
+//    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+//
+//    // We'll use perspective 
+//    glMatrix.mat4.perspective(pMatrix,degToRad(45), gl.viewportWidth / gl.viewportHeight, 0.1, 200.0);
+//
+//    // We want to look down -z, so create a lookat point in that direction    
+//    glMatrix.vec3.add(viewPt, eyePt, viewDir);
+//    // Then generate the lookat matrix and initialize the MV matrix to that view
+//    glMatrix.mat4.lookAt(mvMatrix, eyePt, viewPt, up); 
+//    // Put light position into VIEW COORDINATES
     //var lightPos = glMatrix.vec4.fromValues(lightx,lighty,lightz,1.0);
     //glMatrix.vec4.transformMat4(lightPos,lightPos,mvMatrix);
     //lightx=lightPos[0];
@@ -446,6 +493,18 @@ function draw() {
     
     //draw each particle, translate position, scale, set color
     for (var i = 0; i < particleNum; i++) {
+        //console.log("entered loop");
+        gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
+        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+        // We'll use perspective 
+        glMatrix.mat4.perspective(pMatrix,degToRad(45), gl.viewportWidth / gl.viewportHeight, 0.1, 200.0);
+
+        // We want to look down -z, so create a lookat point in that direction    
+        glMatrix.vec3.add(viewPt, eyePt, viewDir);
+        // Then generate the lookat matrix and initialize the MV matrix to that view
+        glMatrix.mat4.lookAt(mvMatrix, eyePt, viewPt, up); 
+    
         mvPushMatrix();
         particleUpdate();
         //particles[i] = updatePosition(0.1);
@@ -455,6 +514,7 @@ function draw() {
         
         //set color
         R = particles[i].R;
+        //console.log("red");
         G = particles[i].G;
         B = particles[i].B;
     
@@ -467,6 +527,7 @@ function draw() {
         drawSphere();
         mvPopMatrix();
     }
+    //console.log("exit loop");
     
     //Get material color
     //colorVal = document.getElementById("mat-color").value
@@ -539,10 +600,15 @@ function setGouraudShader() {
  */
 function tick() {
     requestAnimFrame(tick);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
     setupParticles();
     //particleUpdate();
-    draw();
-    //animate();
+    for (var i = 0; i < particleNum; i++) {
+        draw();
+    }
+    //draw();
+    
 }
 
 //-------------------------------------------------------------------------------------
@@ -550,10 +616,13 @@ function tick() {
  * Function to update the particle positions, velocities
  */
 function particleUpdate() {
+    console.log("particle update");
     for (var i = 0; i < particles.length; i++) {
         particles[i].updatePosition(0.1);
         particles[i].updateVelocity(0.1);
+        particles[i].updateAcceleration();
     }
+    console.log(particleNum);
 }
 
 //------------------------------------------------------------------------------------
