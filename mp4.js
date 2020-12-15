@@ -25,7 +25,7 @@ var sphereVertexNormalBuffer;
 var eyePt = glMatrix.vec3.fromValues(0.0,0.0,5.0);
 var viewDir = glMatrix.vec3.fromValues(0.0,0.0,-1.0);
 var up = glMatrix.vec3.fromValues(0.0,1.0,0.0);
-var viewPt = glMatrix.vec3.fromValues(0.0,0.0,0.0);
+var viewPt = glMatrix.vec3.fromValues(0.0,0.0,-2.0);
 
 // Create the normal
 var nMatrix = glMatrix.mat3.create();
@@ -88,11 +88,9 @@ class Particle {
         //acceleration array, determined with gravity
         this.a = glMatrix.vec3.fromValues(0, -0.2 * gravity, 0);
         //this.a = [0, -0.2 * gravity, 0];
-        //acceleration factor from bouncing off the wall
-        //this.wallaccel = 0.75;
         
         //drag constant
-        this.drag = 0.95;
+        this.drag = 0.97;
         
         //radius
         var rand = (Math.random() / 2 + 0.07);
@@ -141,6 +139,7 @@ class Particle {
         //acceleration factor to add to update the velocity vector
         var accelFactor = glMatrix.vec3.create();
         glMatrix.vec3.scale(this.v, this.v, Math.pow(this.drag, time));
+        glMatrix.vec3.scale(accelFactor, this.a, time);
         glMatrix.vec3.add(this.v, this.v, accelFactor);
     }
     
@@ -148,7 +147,8 @@ class Particle {
      * function to update acceleration using gravity
      */
     updateAcceleration() {
-        this.a = [0, -0.2 * gravity, 0];
+        //this.a = [0, -0.2 * gravity, 0];
+        this.a = glMatrix.vec3.fromValues(0, -0.2 * gravity, 0);
     }
 }
 
@@ -427,7 +427,7 @@ function setupParticles() {
     console.log("add particle");
 }
 
-setupParticles();
+//setupParticles();
 
 //----------------------------------------------------------------------------------
 /**
@@ -509,9 +509,9 @@ function draw() {
         B = particles[i].B;
     
         //Get shiny
-        shiny = 100;
+        shiny = 50;
     
-        uploadLightsToShader([20,20,20],[0.0,0.0,0.0],[1.0,1.0,1.0],[1.0,1.0,1.0]);
+        uploadLightsToShader([25,25,25],[0.0,0.0,0.0],[1.0,1.0,1.0],[1.0,1.0,1.0]);
         uploadMaterialToShader([R,G,B],[R,G,B],[1.0,1.0,1.0],shiny);
         setMatrixUniforms();
         drawSphere();
